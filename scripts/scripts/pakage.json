@@ -1,0 +1,13 @@
+{
+  "name": "sales-pipeline-scripts",
+  "version": "1.0.0",
+  "scripts": {
+    "generate": "node generate-batch.js",
+    "generate:50k": "node generate-batch.js 50000",
+    "generate:1mm": "node generate-batch.js 1000000"
+  },
+  "dependencies": {
+    "csv-parse": "^5.5.3",
+    "csv-stringify": "^6.4.6"
+  }
+}

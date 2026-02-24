@@ -1,13 +1,9 @@
 'use strict'
 
 /**
- * generate-batch.js
- * Lê o CSV original e replica os registros até TARGET_SIZE,
- * substituindo apenas o order_id em cada linha.
- *
  * Uso:
- *   node scripts/generate-batch.js          → 10k registros
- *   node scripts/generate-batch.js 50000    → 50k registros
+ *   node scripts/generate-batch.js           → 10k registros
+ *   node scripts/generate-batch.js 50000     → 50k registros
  */
 
 const fs   = require('fs')
@@ -15,8 +11,8 @@ const path = require('path')
 const { parse }     = require('csv-parse/sync')
 const { stringify } = require('csv-stringify/sync')
 
-const INPUT_FILE  = path.resolve(__dirname, './Base de Dados.csv')
-const OUTPUT_FILE = path.resolve(__dirname, './batch_10k.csv')
+const INPUT_FILE  = path.resolve(__dirname, 'Base de Dados.csv')
+const OUTPUT_FILE = path.resolve(__dirname, 'batch_10k.csv')
 const TARGET_SIZE = parseInt(process.argv[2]) || 10_000
 
 function generateOrderId(counter) {
@@ -39,9 +35,7 @@ function generateBatch() {
     }
   }
 
-  fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true })
   fs.writeFileSync(OUTPUT_FILE, stringify(rows, { header: true, columns: Object.keys(records[0]) }))
-
   console.log(`✅ ${rows.length.toLocaleString()} registros → ${OUTPUT_FILE}`)
 }
 

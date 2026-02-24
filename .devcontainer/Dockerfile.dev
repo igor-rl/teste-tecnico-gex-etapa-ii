@@ -1,23 +1,8 @@
 FROM node:20-alpine
 
-# ─── Ferramentas de sistema ───────────────────────────────────────
-RUN apk add --no-cache \
-    git \
-    curl \
-    bash \
-    zsh \
-    postgresql-client \
-    redis \
-    make \
-    python3
+RUN apk add --no-cache git curl bash zsh postgresql-client redis make python3
 
-# ─── Ferramentas globais Node ─────────────────────────────────────
-RUN npm install -g \
-    nodemon \
-    tsx \
-    typescript \
-    @anthropic-ai/sdk
+RUN npm install -g nodemon tsx typescript
 
 WORKDIR /app
-
 CMD ["sleep", "infinity"]

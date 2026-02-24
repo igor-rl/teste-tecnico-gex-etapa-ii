@@ -2,11 +2,7 @@
 set -e
 
 for service in ingestion validation delivery persistence observability; do
-  if [ -f "services/$service/package.json" ]; then
-    npm install --prefix services/$service --silent
-  fi
+  [ -f "services/$service/package.json" ] && npm install --prefix services/$service --silent
 done
 
-if [ -f "scripts/package.json" ]; then
-  npm install --prefix scripts --silent
-fi
+[ -f "scripts/package.json" ] && npm install --prefix scripts --silent
