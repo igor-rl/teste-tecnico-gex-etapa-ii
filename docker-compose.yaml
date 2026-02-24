@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   # ─── Infrastructure ───────────────────────────────────────────────
   redis:
@@ -38,6 +36,7 @@ services:
     build:
       context: ./services/ingestion
       dockerfile: Dockerfile
+      target: dev
     container_name: sales_ingestion
     ports:
       - '3001:3001'
@@ -50,13 +49,13 @@ services:
         condition: service_healthy
     volumes:
       - ./services/ingestion:/app
-      - /app/node_modules
     restart: unless-stopped
 
   validation:
     build:
       context: ./services/validation
       dockerfile: Dockerfile
+      target: dev
     container_name: sales_validation
     environment:
       REDIS_URL: redis://redis:6379
@@ -66,30 +65,30 @@ services:
         condition: service_healthy
     volumes:
       - ./services/validation:/app
-      - /app/node_modules
     restart: unless-stopped
 
   delivery:
     build:
       context: ./services/delivery
       dockerfile: Dockerfile
+      target: dev
     container_name: sales_delivery
     environment:
       REDIS_URL: redis://redis:6379
-      WEBHOOK_URL: ${WEBHOOK_URL:-https://webhook.site/your-uuid-here}
+      WEBHOOK_URL: https://webhook.site/17a62adb-52f6-4c22-9482-7820ea482897
       NODE_ENV: development
     depends_on:
       redis:
         condition: service_healthy
     volumes:
       - ./services/delivery:/app
-      - /app/node_modules
     restart: unless-stopped
 
   persistence:
     build:
       context: ./services/persistence
       dockerfile: Dockerfile
+      target: dev
     container_name: sales_persistence
     environment:
       REDIS_URL: redis://redis:6379
@@ -102,13 +101,13 @@ services:
         condition: service_healthy
     volumes:
       - ./services/persistence:/app
-      - /app/node_modules
     restart: unless-stopped
 
   observability:
     build:
       context: ./services/observability
       dockerfile: Dockerfile
+      target: dev
     container_name: sales_observability
     ports:
       - '3005:3005'
@@ -124,5 +123,4 @@ services:
         condition: service_healthy
     volumes:
       - ./services/observability:/app
-      - /app/node_modules
     restart: unless-stopped

@@ -1,0 +1,13 @@
+{
+  "name": "gex",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "services/*",
+    "scripts/*"
+  ],
+  "scripts": {
+    "dev:delivery": "npm run dev --workspace=services/delivery",
+    "install:all": "npm install"
+  }
+}

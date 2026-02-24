@@ -11,7 +11,7 @@ const logger = pino({
 })
 
 const connection  = { url: process.env.REDIS_URL || 'redis://localhost:6379' }
-const WEBHOOK_URL = process.env.WEBHOOK_URL || 'https://webhook.site/test'
+const WEBHOOK_URL = process.env.WEBHOOK_URL || 'https://webhook.site/17a62adb-52f6-4c22-9482-7820ea482897'
 const resultsQueue = new Queue('delivery.results', { connection })
 
 // ─── Envio com timeout ────────────────────────────────────────────

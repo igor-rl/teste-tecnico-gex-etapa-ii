@@ -1,0 +1,23 @@
+### Real-time (1 evento)
+POST http://ingestion:3001/events
+Content-Type: application/json
+
+{
+  "order_id": "ORD-TEST-001",
+  "event": "order.approved",
+  "payment_status": "approved"
+}
+
+### Batch (CSV como arquivo)
+POST http://ingestion:3001/batch
+Content-Type: multipart/form-data; boundary=----Boundary
+
+------Boundary
+Content-Disposition: form-data; name="file"; filename="batch_10k.csv"
+Content-Type: text/csv
+
+< ./scripts/generate-batch/batch_10k.csv
+------Boundary--
+
+### https://webhook.site
+POST https://webhook.site/17a62adb-52f6-4c22-9482-7820ea482897

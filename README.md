@@ -1,4 +1,4 @@
-# Sales Pipeline — GEX Teste Técnico
+# GEX — GEX Teste Técnico
 
 Pipeline de processamento de eventos de vendas com 5 microserviços Node.js desacoplados via BullMQ/Redis.
 
@@ -24,7 +24,7 @@ Pipeline de processamento de eventos de vendas com 5 microserviços Node.js desa
 ├── data/               ← criado automaticamente (git ignored)
 │   ├── redis/
 │   └── postgres/
-└── docker-compose.yml
+└── docker-compose.yaml
 ```
 
 ## Setup
