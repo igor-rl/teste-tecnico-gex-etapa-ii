@@ -44,7 +44,7 @@ docker compose up --build
 
 ```bash
 # Dentro do devcontainer ou localmente
-cd scripts && npm install
+cd scripts/generate-batch && npm install
 node generate-batch.js          # → 10k
 node generate-batch.js 50000    # → 50k
 ```
