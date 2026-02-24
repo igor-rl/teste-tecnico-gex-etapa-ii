@@ -1,0 +1,128 @@
+version: '3.9'
+
+services:
+  # ─── Infrastructure ───────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: sales_redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./data/redis:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: sales_postgres
+    environment:
+      POSTGRES_DB: gex
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pgpass
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./infra/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U pguser -d gex']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # ─── Services ─────────────────────────────────────────────────────
+  ingestion:
+    build:
+      context: ./services/ingestion
+      dockerfile: Dockerfile
+    container_name: sales_ingestion
+    ports:
+      - '3001:3001'
+    environment:
+      PORT: 3001
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: development
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/ingestion:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  validation:
+    build:
+      context: ./services/validation
+      dockerfile: Dockerfile
+    container_name: sales_validation
+    environment:
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: development
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/validation:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  delivery:
+    build:
+      context: ./services/delivery
+      dockerfile: Dockerfile
+    container_name: sales_delivery
+    environment:
+      REDIS_URL: redis://redis:6379
+      WEBHOOK_URL: ${WEBHOOK_URL:-https://webhook.site/your-uuid-here}
+      NODE_ENV: development
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/delivery:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  persistence:
+    build:
+      context: ./services/persistence
+      dockerfile: Dockerfile
+    container_name: sales_persistence
+    environment:
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgresql://pguser:pgpass@postgres:5432/gex
+      NODE_ENV: development
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./services/persistence:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  observability:
+    build:
+      context: ./services/observability
+      dockerfile: Dockerfile
+    container_name: sales_observability
+    ports:
+      - '3005:3005'
+    environment:
+      PORT: 3005
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgresql://pguser:pgpass@postgres:5432/gex
+      NODE_ENV: development
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./services/observability:/app
+      - /app/node_modules
+    restart: unless-stopped
